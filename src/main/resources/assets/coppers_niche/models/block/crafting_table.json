@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "minecraft:block/dark_oak_planks",
+    "east": "coppers_niche:block/copper_workbench_side",
+    "north": "coppers_niche:block/copper_workbench_side",
+    "particle": "coppers_niche:block/copper_workbench_side",
+    "south": "coppers_niche:block/copper_workbench_side",
+    "up": "coppers_niche:block/copper_workbench_top",
+    "west": "coppers_niche:block/copper_workbench_side"
+  }
+}
