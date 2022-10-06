@@ -1,4 +1,4 @@
-package net.favouriteless.coppersniche.items;
+package net.favouriteless.coppersniche.common.items;
 
 import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.world.item.Items;

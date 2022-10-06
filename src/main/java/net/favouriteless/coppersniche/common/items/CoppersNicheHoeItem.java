@@ -1,4 +1,4 @@
-package net.favouriteless.coppersniche.items;
+package net.favouriteless.coppersniche.common.items;
 
 import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.Tier;

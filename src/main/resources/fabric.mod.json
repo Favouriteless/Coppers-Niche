@@ -21,6 +21,9 @@
   "entrypoints": {
     "main": [
       "net.favouriteless.coppersniche.CoppersNiche"
+    ],
+    "client": [
+      "net.favouriteless.coppersniche.CoppersNicheClient"
     ]
   },
   "mixins": [
