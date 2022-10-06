@@ -2,6 +2,7 @@ package net.favouriteless.coppersniche.common.items;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Tier;
 
 public class NoFoilPickaxeItem extends PickaxeItem {
@@ -13,5 +14,10 @@ public class NoFoilPickaxeItem extends PickaxeItem {
 	@Override
 	public boolean isFoil(ItemStack stack) {
 		return false;
+	}
+
+	@Override
+	public Rarity getRarity(ItemStack stack) {
+		return Rarity.COMMON;
 	}
 }

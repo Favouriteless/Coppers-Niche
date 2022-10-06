@@ -84,6 +84,7 @@ public class CopperWorkbenchMenu extends AbstractContainerMenu {
 	public void onResultTaken() {
 		slots.get(1).getItem().shrink(1);
 		slots.get(2).getItem().shrink(1);
+		data.set(0, 0);
 
 		access.execute((level, pos) -> {
 			level.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.NEUTRAL, 1.0F, 1.0F);

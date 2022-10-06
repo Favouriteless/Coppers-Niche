@@ -1,9 +1,6 @@
 package net.favouriteless.coppersniche.common.items;
 
-import net.minecraft.world.item.HoeItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.PickaxeItem;
-import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.*;
 
 public class NoFoilHoeItem extends HoeItem {
 
@@ -14,5 +11,10 @@ public class NoFoilHoeItem extends HoeItem {
 	@Override
 	public boolean isFoil(ItemStack stack) {
 		return false;
+	}
+
+	@Override
+	public Rarity getRarity(ItemStack stack) {
+		return Rarity.COMMON;
 	}
 }
