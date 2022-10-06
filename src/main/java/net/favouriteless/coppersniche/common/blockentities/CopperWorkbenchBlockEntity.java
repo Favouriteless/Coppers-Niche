@@ -6,10 +6,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -18,18 +19,18 @@ import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.lwjgl.system.windows.INPUT;
 
 import java.util.Iterator;
+import java.util.List;
 
-public class CopperWorkbenchBlockEntity extends BaseContainerBlockEntity implements StackedContentsCompatible {
+public class CopperWorkbenchBlockEntity extends BaseContainerBlockEntity {
 
 	public static final int MAX_COPPER = 4;
 	public static final int INPUT_TIME_TOTAL = 40;
 	private int currentCopper = 0;
 	private int inputTime = 0;
 
-	private final NonNullList<ItemStack> items = NonNullList.withSize(4, ItemStack.EMPTY);
+	private final NonNullList<ItemStack> items = NonNullList.withSize(1, ItemStack.EMPTY);
 	public final ContainerData containerData;
 
 
@@ -80,6 +81,8 @@ public class CopperWorkbenchBlockEntity extends BaseContainerBlockEntity impleme
 					blockEntity.inputTime = 0;
 					blockEntity.currentCopper++;
 					blockEntity.getItem(0).shrink(1);
+					if(blockEntity.currentCopper == MAX_COPPER)
+						blockEntity.UpdateContainerResult();
 				}
 				else
 					blockEntity.inputTime++;
@@ -90,9 +93,23 @@ public class CopperWorkbenchBlockEntity extends BaseContainerBlockEntity impleme
 		}
 	}
 
+	private void UpdateContainerResult() {
+		if(level instanceof ServerLevel serverLevel) {
+			List<ServerPlayer> players = serverLevel.getPlayers(player -> player.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) <= 64.0D);
+
+			for(ServerPlayer player : players) {
+				if(player.hasContainerOpen()) {
+					if(player.containerMenu instanceof CopperWorkbenchMenu menu) {
+						menu.createResult();
+					}
+				}
+			}
+		}
+	}
+
 	@Override
 	protected AbstractContainerMenu createMenu(int id, Inventory inventory) {
-		return new CopperWorkbenchMenu(id, inventory, this, this.containerData);
+		return new CopperWorkbenchMenu(id, inventory, this, this.containerData, ContainerLevelAccess.create(level, worldPosition));
 	}
 
 	@Override
@@ -159,17 +176,6 @@ public class CopperWorkbenchBlockEntity extends BaseContainerBlockEntity impleme
 	}
 
 	@Override
-	public void fillStackedContents(StackedContents helper) {
-		Iterator var2 = this.items.iterator();
-
-		while(var2.hasNext()) {
-			ItemStack itemStack = (ItemStack)var2.next();
-			helper.accountStack(itemStack);
-		}
-
-	}
-
-	@Override
 	protected void saveAdditional(CompoundTag nbt) {
 		super.saveAdditional(nbt);
 		nbt.putInt("copper", currentCopper);
@@ -182,4 +188,6 @@ public class CopperWorkbenchBlockEntity extends BaseContainerBlockEntity impleme
 		this.currentCopper = nbt.getInt("copper");
 		ContainerHelper.loadAllItems(nbt, items);
 	}
+
+
 }

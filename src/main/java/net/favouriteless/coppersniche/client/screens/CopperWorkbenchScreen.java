@@ -39,6 +39,13 @@ public class CopperWorkbenchScreen extends AbstractContainerScreen<CopperWorkben
 	private boolean toggleIcon = false;
 	private long prevToggleTime = 0;
 
+	private static final int FINAL_BAR_X = 109;
+	private static final int FINAL_BAR_Y = 17;
+	private static final int FINAL_BAR_WIDTH = 28;
+	private static final int FINAL_BAR_HEIGHT = 21;
+	private static final int FINAL_BAR_U = 176;
+	private static final int FINAL_BAR_V = 0;
+
 
 	public CopperWorkbenchScreen(CopperWorkbenchMenu container, Inventory inventory, Component component) {
 		super(container, inventory, component);
@@ -65,7 +72,7 @@ public class CopperWorkbenchScreen extends AbstractContainerScreen<CopperWorkben
 			this.blit(poseStack, screenX + INPUT_BAR_X, screenY + INPUT_BAR_Y, INPUT_BAR_U, INPUT_BAR_V, barProgressScaled, INPUT_BAR_HEIGHT);
 		}
 
-		if(menu.container.getItem(2).isEmpty()) {
+		if(menu.inputSlots.getItem(1).isEmpty()) {
 			long timeSinceOpened = Minecraft.getInstance().level.getGameTime() - startGameTime;
 			if(timeSinceOpened % 60 == 0 && timeSinceOpened != prevToggleTime) {
 				toggleIcon = !toggleIcon;
@@ -74,6 +81,10 @@ public class CopperWorkbenchScreen extends AbstractContainerScreen<CopperWorkben
 
 			if(toggleIcon)
 				this.blit(poseStack, screenX + MATERIAL_ICON_X, screenY + MATERIAL_ICON_Y, MATERIAL_ICON_U, MATERIAL_ICON_V, MATERIAL_ICON_WIDTH, MATERIAL_ICON_WIDTH);
+		}
+
+		if(menu.resultSlots.getItem(0).isEmpty()) {
+			this.blit(poseStack, screenX + FINAL_BAR_X, screenY + FINAL_BAR_Y, FINAL_BAR_U, FINAL_BAR_V, FINAL_BAR_WIDTH, FINAL_BAR_HEIGHT);
 		}
 
 		this.renderTooltip(poseStack, mouseX, mouseY);

@@ -32,9 +32,12 @@ public class CopperWorkbenchRecipe extends SingleItemRecipe {
 
 	@Override
 	public boolean matches(Container container, Level level) {
-		if(container.getContainerSize() == 4)
-			return ingredient.test(container.getItem(1));
-		return false;
+		return ingredient.test(container.getItem(0));
+	}
+
+	@Override
+	public boolean isSpecial() {
+		return true;
 	}
 
 	public static class Serializer implements RecipeSerializer<CopperWorkbenchRecipe> {

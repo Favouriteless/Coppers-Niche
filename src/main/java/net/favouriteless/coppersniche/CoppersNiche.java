@@ -27,10 +27,10 @@ public class CoppersNiche implements ModInitializer {
 
 	public static final String MOD_ID = "coppers_niche";
 
-	public static final PickaxeItem COPPER_PICKAXE = new PickaxeItem(CoppersNicheTiers.COPPER, 1, -2.8F, new Properties().tab(CreativeModeTab.TAB_TOOLS));
-	public static final AxeItem COPPER_AXE = new AxeItem(CoppersNicheTiers.COPPER, 6.0F, -3.1F, new Properties().tab(CreativeModeTab.TAB_TOOLS));
-	public static final ShovelItem COPPER_SHOVEL = new ShovelItem(CoppersNicheTiers.COPPER, 1.5F, -3.0F, new Properties().tab(CreativeModeTab.TAB_TOOLS));
-	public static final HoeItem COPPER_HOE = new CoppersNicheHoeItem(CoppersNicheTiers.COPPER, -2, -1.0F, new Properties().tab(CreativeModeTab.TAB_TOOLS));
+	public static final PickaxeItem COPPER_PICKAXE = new NoFoilPickaxeItem(CoppersNicheTiers.COPPER, 1, -2.8F, new Properties().tab(CreativeModeTab.TAB_TOOLS));
+	public static final AxeItem COPPER_AXE = new NoFoilAxeItem(CoppersNicheTiers.COPPER, 6.0F, -3.1F, new Properties().tab(CreativeModeTab.TAB_TOOLS));
+	public static final ShovelItem COPPER_SHOVEL = new NoFoilShovelItem(CoppersNicheTiers.COPPER, 1.5F, -3.0F, new Properties().tab(CreativeModeTab.TAB_TOOLS));
+	public static final HoeItem COPPER_HOE = new NoFoilHoeItem(CoppersNicheTiers.COPPER, -2, -1.0F, new Properties().tab(CreativeModeTab.TAB_TOOLS));
 
 	public static final CopperWorkbenchBlock COPPER_WORKBENCH = new CopperWorkbenchBlock(BlockBehaviour.Properties.of(Material.STONE).requiresCorrectToolForDrops().strength(3.5F));
 	public static final BlockItem COPPER_WORKBENCH_ITEM = new BlockItem(COPPER_WORKBENCH, new Properties().tab(CreativeModeTab.TAB_DECORATIONS));
