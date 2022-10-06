@@ -4,29 +4,33 @@ import net.favouriteless.coppersniche.CoppersNiche;
 import net.favouriteless.coppersniche.common.menus.CopperWorkbenchMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.StackedContents;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.StackedContentsCompatible;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.lwjgl.system.windows.INPUT;
 
 import java.util.Iterator;
 
 public class CopperWorkbenchBlockEntity extends BaseContainerBlockEntity implements StackedContentsCompatible {
 
-	public static final int SLOT_INPUT_COPPER = 0;
-	public static final int SLOT_INPUT_TOOL = 1;
-	public static final int SLOT_INPUT_MATERIAL = 2;
-	public static final int SLOT_RESULT = 3;
+	public static final int MAX_COPPER = 4;
+	public static final int INPUT_TIME_TOTAL = 40;
+	private int currentCopper = 0;
+	private int inputTime = 0;
 
 	private final NonNullList<ItemStack> items = NonNullList.withSize(4, ItemStack.EMPTY);
+	public final ContainerData containerData;
 
 
 	public CopperWorkbenchBlockEntity(BlockPos pos, BlockState state) {
@@ -35,12 +39,60 @@ public class CopperWorkbenchBlockEntity extends BaseContainerBlockEntity impleme
 
 	public CopperWorkbenchBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
-		items.set(1, new ItemStack(Items.DIAMOND, 3));
+		this.containerData = new ContainerData() {
+
+			@Override
+			public int get(int index) {
+				return switch(index) {
+					case 0 -> currentCopper;
+					case 1 -> inputTime;
+					default -> 0;
+				};
+			}
+
+			@Override
+			public void set(int index, int value) {
+				switch(index) {
+					case 0:
+						currentCopper = value;
+					case 1:
+						inputTime = value;
+				}
+			}
+
+			@Override
+			public int getCount() {
+				return 2;
+			}
+		};
+	}
+
+
+	public static <T extends BlockEntity> void tick(Level level, BlockPos blockPos, BlockState blockState, T t) {
+		if(level.isClientSide)
+			return;
+
+		CopperWorkbenchBlockEntity blockEntity = (CopperWorkbenchBlockEntity)t;
+
+		if(blockEntity.currentCopper < MAX_COPPER) {
+			if(!blockEntity.getItem(0).isEmpty() && blockEntity.getItem(0).getItem() == Items.OXIDIZED_COPPER) {
+				if(blockEntity.inputTime == INPUT_TIME_TOTAL) {
+					blockEntity.inputTime = 0;
+					blockEntity.currentCopper++;
+					blockEntity.getItem(0).shrink(1);
+				}
+				else
+					blockEntity.inputTime++;
+			}
+			else {
+				blockEntity.inputTime = 0;
+			}
+		}
 	}
 
 	@Override
 	protected AbstractContainerMenu createMenu(int id, Inventory inventory) {
-		return new CopperWorkbenchMenu(id, inventory, this);
+		return new CopperWorkbenchMenu(id, inventory, this, this.containerData);
 	}
 
 	@Override
@@ -115,5 +167,19 @@ public class CopperWorkbenchBlockEntity extends BaseContainerBlockEntity impleme
 			helper.accountStack(itemStack);
 		}
 
+	}
+
+	@Override
+	protected void saveAdditional(CompoundTag nbt) {
+		super.saveAdditional(nbt);
+		nbt.putInt("copper", currentCopper);
+		ContainerHelper.saveAllItems(nbt, this.items);
+	}
+
+	@Override
+	public void load(CompoundTag nbt) {
+		super.load(nbt);
+		this.currentCopper = nbt.getInt("copper");
+		ContainerHelper.loadAllItems(nbt, items);
 	}
 }

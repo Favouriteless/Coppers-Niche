@@ -1,0 +1,8 @@
+{
+  "type": "coppers_niche:copper_workbench",
+  "ingredient": {
+    "item": "minecraft:iron_shovel"
+  },
+  "result": "coppers_niche:copper_shovel",
+  "count": 1
+}

@@ -5,23 +5,24 @@ import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 public class CopperWorkbenchMenu extends AbstractContainerMenu {
 
-	private final Container container;
+	public final Container container;
+	public final ContainerData data;
 
 	public CopperWorkbenchMenu(int id, Inventory inventory) {
-		this(id, inventory, new SimpleContainer(4));
+		this(id, inventory, new SimpleContainer(4), new SimpleContainerData(2));
 	}
 
-	public CopperWorkbenchMenu(int id, Inventory inventory, Container container) {
+	public CopperWorkbenchMenu(int id, Inventory inventory, Container container, ContainerData data) {
 		super(CoppersNiche.COPPER_WORKBENCH_MENU, id);
 		checkContainerSize(container, 4);
 		this.container = container;
+		this.data = data;
 
 		// Add container slots
 		this.addSlot(new SlotCopperInput(container, 0, 17, 20));
@@ -40,11 +41,56 @@ public class CopperWorkbenchMenu extends AbstractContainerMenu {
 			this.addSlot(new Slot(inventory, i + 9, invStartX + (i % 9) * 18, invStartY + (i / 9) * 18));
 		}
 
+		this.addDataSlots(data);
+
 	}
 
 	@Override
 	public ItemStack quickMoveStack(Player player, int index) {
-		return null;
+		ItemStack itemStack = ItemStack.EMPTY;
+		Slot slot = slots.get(index);
+
+		if (slot.hasItem()) {
+			ItemStack itemStack2 = slot.getItem();
+			itemStack = itemStack2.copy();
+
+			if(index < 4) {
+				if (!this.moveItemStackTo(itemStack2, 4, 40, false)) {
+					return ItemStack.EMPTY;
+				}
+			}
+			else {
+				if(getSlot(0).mayPlace(itemStack)) {
+					if (!this.moveItemStackTo(itemStack2, 0, 1, false)) {
+						return ItemStack.EMPTY;
+					}
+				}
+				else if(getSlot(2).mayPlace(itemStack)) {
+					if (!this.moveItemStackTo(itemStack2, 2, 3, false)) {
+						return ItemStack.EMPTY;
+					}
+				}
+				else {
+					if (!this.moveItemStackTo(itemStack2, 1, 2, false)) {
+						return ItemStack.EMPTY;
+					}
+				}
+			}
+
+			if (itemStack2.isEmpty()) {
+				slot.set(ItemStack.EMPTY);
+			} else {
+				slot.setChanged();
+			}
+
+			if (itemStack2.getCount() == itemStack.getCount()) {
+				return ItemStack.EMPTY;
+			}
+
+			slot.onTake(player, itemStack2);
+		}
+
+		return itemStack;
 	}
 
 	@Override
@@ -60,7 +106,7 @@ public class CopperWorkbenchMenu extends AbstractContainerMenu {
 
 		@Override
 		public boolean mayPlace(ItemStack stack) {
-			return stack.getItem() == Items.COPPER_BLOCK;
+			return stack.getItem() == Items.OXIDIZED_COPPER;
 		}
 	}
 

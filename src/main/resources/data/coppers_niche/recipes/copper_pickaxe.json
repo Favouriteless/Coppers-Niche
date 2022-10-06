@@ -1,0 +1,8 @@
+{
+  "type": "coppers_niche:copper_workbench",
+  "ingredient": {
+    "item": "minecraft:iron_pickaxe"
+  },
+  "result": "coppers_niche:copper_pickaxe",
+  "count": 1
+}

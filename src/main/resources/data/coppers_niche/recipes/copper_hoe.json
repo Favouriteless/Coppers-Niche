@@ -1,0 +1,8 @@
+{
+  "type": "coppers_niche:copper_workbench",
+  "ingredient": {
+    "item": "minecraft:iron_hoe"
+  },
+  "result": "coppers_niche:copper_hoe",
+  "count": 1
+}

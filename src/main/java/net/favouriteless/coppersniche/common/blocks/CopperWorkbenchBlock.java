@@ -1,5 +1,6 @@
 package net.favouriteless.coppersniche.common.blocks;
 
+import net.favouriteless.coppersniche.CoppersNiche;
 import net.favouriteless.coppersniche.common.blockentities.CopperWorkbenchBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -16,6 +17,7 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.Nullable;
 
 
 public class CopperWorkbenchBlock extends BaseEntityBlock {
@@ -72,5 +74,11 @@ public class CopperWorkbenchBlock extends BaseEntityBlock {
 	@Override
 	public RenderShape getRenderShape(BlockState state) {
 		return RenderShape.MODEL;
+	}
+
+	@Nullable
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+		return type == CoppersNiche.COPPER_WORKBENCH_BLOCK_ENTITY ? CopperWorkbenchBlockEntity::tick : null;
 	}
 }
