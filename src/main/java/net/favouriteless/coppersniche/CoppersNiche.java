@@ -1,6 +1,8 @@
 package net.favouriteless.coppersniche;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.favouriteless.coppersniche.common.blockentities.CopperWorkbenchBlockEntity;
@@ -11,12 +13,15 @@ import net.favouriteless.coppersniche.recipes.CopperWorkbenchRecipe;
 import net.favouriteless.coppersniche.recipes.CopperWorkbenchRecipe.Type;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleItemRecipe;
 import net.minecraft.world.item.crafting.SingleItemRecipe.Serializer;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
@@ -54,6 +59,31 @@ public class CoppersNiche implements ModInitializer {
 
 		Registry.register(Registry.RECIPE_TYPE, new ResourceLocation(MOD_ID, "copper_workbench"), RECIPE_TYPE);
 		Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation(MOD_ID, "copper_workbench"), RECIPE_SERIALIZER);
+
+		PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, entity) -> {
+			ItemStack stack = player.getMainHandItem();
+
+			boolean extraDamage = false;
+			if(stack.getItem() == COPPER_PICKAXE) {
+				if(!state.is(BlockTags.MINEABLE_WITH_PICKAXE))
+					extraDamage = true;
+			}
+			else if(stack.getItem() == COPPER_AXE) {
+				if(!state.is(BlockTags.MINEABLE_WITH_AXE))
+					extraDamage = true;
+			}
+			else if(stack.getItem() == COPPER_SHOVEL) {
+				if(!state.is(BlockTags.MINEABLE_WITH_SHOVEL))
+					extraDamage = true;
+			}
+			else if(stack.getItem() == COPPER_HOE) {
+				if(!state.is(BlockTags.MINEABLE_WITH_HOE))
+					extraDamage = true;
+			}
+
+			if(extraDamage)
+				stack.hurtAndBreak(2, player, p -> p.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+		});
 	}
 
 }
